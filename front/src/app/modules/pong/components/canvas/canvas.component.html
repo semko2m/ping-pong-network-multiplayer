@@ -1,0 +1,27 @@
+<div (window:beforeunload)="logOut()">
+  <canvas
+    (mousemove)="getMousePos($event)"
+    #game
+    width="640"
+    height="641"
+    style="border: 1px solid black">
+  </canvas>
+</div>
+
+<ul>
+  <li *ngIf="this.user1">User ID {{this.user1.id}}</li>
+  <li *ngIf="this.user2">User ID {{this.user2.id}}</li>
+  <li *ngIf="this.user3">User ID {{this.user3.id}}</li>
+  <li *ngIf="this.user4">User ID {{this.user4.id}}</li>
+</ul>
+<ul *ngIf="!this.user1">
+  <li  *ngFor="let oneUser of listOfUsers">{{oneUser.userId}}</li>
+</ul>
+
+<p>
+  <button (click)="startGame()">Start the game. Min 2 players</button>
+  <button (click)="endGame()">End Game</button>
+<!--  <button (click)="move('left')">Left</button>-->
+<!--  <button (click)="move('up')">Up</button>-->
+<!--  <button (click)="move('down')">Down</button>-->
+</p>

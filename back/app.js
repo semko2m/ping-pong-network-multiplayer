@@ -36,7 +36,8 @@ let user1 = {
   height: 100,
   score: 0,
   color: "WHITE",
-  id: 0
+  id: 0,
+  position: 1
 }
 
 // user2 Paddle
@@ -47,7 +48,8 @@ let user2 = {
   height: 100,
   score: 0,
   color: "WHITE",
-  id: 0
+  id: 0,
+  position: 2
 }
 
 let user3 = {
@@ -57,7 +59,8 @@ let user3 = {
   height: 10,
   score: 0,
   color: "WHITE",
-  id: 0
+  id: 0,
+  position :3
 }
 
 let user4 = {
@@ -67,7 +70,8 @@ let user4 = {
   height: 10,
   score: 0,
   color: "WHITE",
-  id: 0
+  id: 0,
+  position : 4
 }
 
 
@@ -104,7 +108,8 @@ function resetUser(userId) {
         height: 100,
         score: 0,
         color: "WHITE",
-        id: 0
+        id: 0,
+        position : 1
       }
       break;
     case 2 :
@@ -115,7 +120,8 @@ function resetUser(userId) {
         height: 100,
         score: 0,
         color: "WHITE",
-        id: 0
+        id: 0,
+        position : 2
       }
       break;
     case 3 :
@@ -126,7 +132,8 @@ function resetUser(userId) {
         height: 10,
         score: 0,
         color: "WHITE",
-        id: 0
+        id: 0,
+        position : 3
       };
       break;
     case 4:
@@ -137,7 +144,8 @@ function resetUser(userId) {
         height: 10,
         score: 0,
         color: "WHITE",
-        id: 0
+        id: 0,
+        position : 4
       };
       break;
   }
@@ -191,11 +199,17 @@ function update() {
     // console.log(ball.y);
 
     Socketio.emit("playSound", 'hit')
-    // we check where the ball hits the paddle
-    let collidePoint = (ball.y - (player.y + player.height / 2));
-    // normalize the value of collidePoint, we need to get numbers between -1 and 1.
-    // -player.height/2 < collide Point < player.height/2
-    collidePoint = collidePoint / (player.height / 2);
+    let collidePoint;
+    if(player.position === 1 || player.position ===2) {
+      // we check where the ball hits the paddle
+      collidePoint = (ball.y - (player.y + player.height / 2));
+      // normalize the value of collidePoint, we need to get numbers between -1 and 1.
+      // -player.height/2 < collide Point < player.height/2
+      collidePoint = collidePoint / (player.height / 2);
+    }else {
+      collidePoint = (ball.x - (player.x + player.width / 2));
+      collidePoint = collidePoint / (player.width / 2);
+    }
 
     // when the ball hits the top of a paddle we want the ball, to take a -45degees angle
     // when the ball hits the center of the paddle we want the ball to take a 0degrees angle
@@ -204,9 +218,16 @@ function update() {
     let angleRad = (Math.PI / 4) * collidePoint;
 
     // change the X and Y velocity direction
-    let direction = (ball.x + ball.radius < canvas.width / 2) ? 1 : -1;
-    ball.velocityX = direction * ball.speed * Math.cos(angleRad);
-    ball.velocityY = ball.speed * Math.sin(angleRad);
+    if(player.position === 1 || player.position ===2){
+      let direction = (ball.x + ball.radius < canvas.width / 2) ? 1 : -1;
+      ball.velocityX = direction * ball.speed * Math.cos(angleRad);
+      ball.velocityY = ball.speed * Math.sin(angleRad);
+    }else{
+      let direction = (ball.y + ball.radius < canvas.height / 2) ? 1 : -1;
+      ball.velocityX = ball.speed * Math.sin(angleRad);
+      ball.velocityY = direction * ball.speed * Math.cos(angleRad);
+    }
+
 
     // speed up the ball everytime a paddle hits it.
     ball.speed += 0.1;
